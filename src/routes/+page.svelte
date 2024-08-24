@@ -8,6 +8,9 @@
     import { TrackballControls } from 'three/examples/jsm/controls/TrackballControls.js'
 
 	import { onMount } from 'svelte';
+    import Hamburger from '$components/Hamburger.svelte'
+
+	let open = false
 
     const table = [
         'H', 'Hydrogen', '1.00794', 1, 1,
@@ -139,7 +142,13 @@
         init();
         animate();
     })
-
+    
+    function showInfo () {
+        console.log(this.getAttribute("title"))
+        document.querySelectorAll('.box').forEach(box => 
+  box.addEventListener('click', () => box.classList.toggle('red'))
+);
+    }
     function init() {
 
         camera = new THREE.PerspectiveCamera( 40, window.innerWidth / window.innerHeight, 1, 10000 );
@@ -152,9 +161,12 @@
         for ( let i = 0; i < table.length; i += 5 ) {
 
             const element = document.createElement( 'div' );
+            element.setAttribute('onmousedown', 'function showInfo()')
+ 
+
             element.className = 'element';
             element.style.backgroundColor = 'rgba(0,127,127,' + ( Math.random() * 0.5 + 0.25 ) + ')';
-            element.title = table [ i  + 1]
+            element.title = table [ i + 1]
 
             const number = document.createElement( 'div' );
             number.className = 'number';
@@ -175,6 +187,7 @@
             objectCSS.position.x = Math.random() * 4000 - 2000;
             objectCSS.position.y = Math.random() * 4000 - 2000;
             objectCSS.position.z = Math.random() * 4000 - 2000;
+
             scene.add( objectCSS );
 
             objects.push( objectCSS );
@@ -360,7 +373,8 @@
     <button id="grid">GRID</button>
 </div>
         
-        
+<Hamburger bind:open />
+
 <style>
     :root {
         --main-color: indigo;
@@ -394,6 +408,7 @@
    :global( .element:hover ) {
         box-shadow: 0px 0px 12px rgba(0,255,255,0.75);
         border: 1px solid rgba(127,255,255,0.75);
+        cursor: pointer;
     }
 
    :global( .element .number ) {
