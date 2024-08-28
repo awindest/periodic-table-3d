@@ -9,8 +9,56 @@
 
 	import { onMount } from 'svelte';
     import Hamburger from '$components/Hamburger.svelte'
+	import InfoPanel from '$components/InfoPanel.svelte'
 
-	let open = false
+
+	let open = false // state of aside
+	let showInfoPanel = false // state of InfoPanel
+    let elementObject // specific element object for InfoPanel to display
+    // informational attributes
+    let symbol,
+        elementName,
+        appearance,
+        atomic_mass,
+        boil, 
+        category, 
+        density, 
+        discovered_by,
+        melt,
+        named_by,
+        phase,
+        summary,
+        source
+        export let data //these data are from https://github.com/Bowserinator/Periodic-Table-JSON
+        
+        function showInfo(name) {
+        // name is the element clicked
+        elementObject = data.elements.find(el => el.name === name)
+        console.log(elementObject)
+        // don't know why my component can't see `element`; this works:
+        elementName = elementObject['name']
+        symbol      = elementObject['symbol']
+        atomic_mass = elementObject['atomic_mass']
+        appearance  = elementObject['appearance']
+        if (appearance === null) {
+            appearance = 'no data'
+        }
+        boil        = elementObject['boil']
+        category    = elementObject['category']
+        density     = elementObject['density']
+        discovered_by  = elementObject['discovered_by']
+        melt        = elementObject['melt']
+        named_by    = elementObject['named_by']
+        if (named_by === null) {
+            named_by = 'no data'
+        }
+        phase       = elementObject['phase']
+        summary     = elementObject['summary']
+        source      = elementObject['source']
+
+        showInfoPanel = true // this will be set to false in the InfoPanel component
+
+    }
 
     const table = [
         'H', 'Hydrogen', '1.00794', 1, 1,
@@ -67,7 +115,7 @@
         'Te', 'Tellurium', '127.6', 16, 5,
         'I', 'Iodine', '126.90447', 17, 5,
         'Xe', 'Xenon', '131.293', 18, 5,
-        'Cs', 'Caesium', '132.9054', 1, 6,
+        'Cs', 'Cesium', '132.9054', 1, 6,
         'Ba', 'Barium', '132.9054', 2, 6,
         'La', 'Lanthanum', '138.90547', 4, 9,
         'Ce', 'Cerium', '140.116', 5, 9,
@@ -139,16 +187,11 @@
     const objects = [];
     const targets = { table: [], sphere: [], helix: [], grid: [] };
     onMount(() => {
+        console.log(data)
         init();
         animate();
     })
     
-    function showInfo () {
-        console.log(this.getAttribute("title"))
-        document.querySelectorAll('.box').forEach(box => 
-  box.addEventListener('click', () => box.classList.toggle('red'))
-);
-    }
     function init() {
 
         camera = new THREE.PerspectiveCamera( 40, window.innerWidth / window.innerHeight, 1, 10000 );
@@ -161,9 +204,12 @@
         for ( let i = 0; i < table.length; i += 5 ) {
 
             const element = document.createElement( 'div' );
-            element.setAttribute('onmousedown', 'function showInfo()')
- 
 
+            // element.addEventListener('pointerdown', 
+            element.addEventListener('pointerdown', 
+                function () { 
+                    showInfo(this.getAttribute('title')) // show more information about the element
+                 })
             element.className = 'element';
             element.style.backgroundColor = 'rgba(0,127,127,' + ( Math.random() * 0.5 + 0.25 ) + ')';
             element.title = table [ i + 1]
@@ -197,6 +243,8 @@
             const object = new THREE.Object3D();
             object.position.x = ( table[ i + 3 ] * 140 ) - 1330;
             object.position.y = - ( table[ i + 4 ] * 180 ) + 990;
+
+            object.addEventListener('click', showInfo) 
 
             targets.table.push( object );
 
@@ -375,18 +423,40 @@
         
 <Hamburger bind:open />
 
+<InfoPanel bind:showInfoPanel>
+    <center>
+        <h1 class="symbol-info">{symbol} - {elementName}</h1>
+    </center>
+    <ul>
+        <li>Atomic Mass: {atomic_mass}</li>
+        <li>Appearance: {appearance}</li>
+        <li>Boiling Point: {boil}&deg;K</li>
+        <li>Category: {category}</li>
+        <li>Density: {density}</li>
+        <li>Discovered by: {discovered_by}</li>
+        <li>Melting Point: {melt}&deg;K</li>
+        <li>Named by: {named_by}</li>
+        <li>Phase: {phase}</li>
+    </ul>
+    <p>Summary: {summary}</p>
+    <p><a href="{source}">Information Source</a></p>
+ 
+
+</InfoPanel>
+
 <style>
     :root {
         --main-color: indigo;
-        --element-box-shadow-hover-color: rgba(0,255,255,0.75);
-
+        --element-box-shadow-hover-color: rgba(0,255,255,0.75)
         --element-box-shadow-color: rgba(0,255,255,0.5);
-        /* --element-box-shadow-color: var(--main-color); */
     }
     a {
         color: #8ff;
     }
-
+    ul {
+        list-style: none; 
+        padding-left: 0;
+    }
     #menu {
         position: absolute;
         bottom: 20px;
@@ -413,8 +483,8 @@
 
    :global( .element .number ) {
             position: absolute;
-            top: 20px;
-            right: 20px;
+            top: 5px;
+            right: 5px;
             font-size: 12px;
             color: rgba(127,255,255,0.75);
         }
@@ -438,7 +508,9 @@
             font-size: 12px;
             color: rgba(127,255,255,0.75);
         }
-
+    :global( .symbol-info ) {
+		text-shadow: 0 0 10px rgba(0,255,255,0.95);
+	}
     button {
         color: rgba(127,255,255,0.75);
         background: transparent;

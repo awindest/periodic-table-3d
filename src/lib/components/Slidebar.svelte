@@ -5,15 +5,26 @@
 
 {#if open}
 	<div class="drawer" transition:fly={{ x: "100%" }}>
-		<center><h1>Attribution</h1></center>
+		<center><h1 class="symbol-info">Attribution</h1></center>
 		<p>
 			This work came from threejs 
 			<a href="https://github.com/mrdoob/three.js/blob/master/examples/css3d_periodictable.html">
-			examples</a> and then adapted to sveltekit.
-			Currently trying to implement click on an element and have more
-			information popup in a dialog box. 
-			See this <a href="https://jsfiddle.net/9tng8dp0/2/">fiddle</a> for a reference.
-			And then maybe migrate to Threlte.
+			examples</a> and then adapted to sveltekit. To show more information, click on one of the 
+			elements. 
+
+			In the dialog box there is a link to even more information about the specific element.
+		</p>
+		<p>
+			See this <a href="https://jsfiddle.net/9tng8dp0/2/">fiddle</a> for a reference on how the 'pointerdown'
+			event was used on the CSS3DObjects.
+		</p>
+
+		<p>Data Attribution:<br><a href="https://github.com/Bowserinator/Periodic-Table-JSON">
+				https://github.com/Bowserinator/Periodic-Table-JSON</a>
+		</p>
+		<p> Source code may be found <a href="https://github.com/awindest/periodic-table-3d">here</a></p>
+		<p>			
+			Future plans are maybe migrate to Threlte.
 		</p>
 
 
@@ -31,11 +42,7 @@
 		width: 400px;
 		box-shadow: 0px 0px 12px rgba(0,255,255,0.5);;
         border-left: 1px solid rgba(127,255,255,0.25);
-/* 		
-		border-left: 1px solid rgba(0, 0, 0, 0.1);
-		box-shadow: -2px 0px 6px -1px rgba(0, 0, 0, 0.1); */
 		background: rgba(255, 255, 255, 0.25);
-		/* background-color: rgba(0,255,255,0.5); */
 		background-color: rgba(0,127,127,0.5);
 
 		backdrop-filter: blur(20px);
