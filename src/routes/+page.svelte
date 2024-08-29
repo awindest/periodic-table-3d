@@ -31,35 +31,7 @@
         source
         export let data //these data are from https://github.com/Bowserinator/Periodic-Table-JSON
         
-        function showInfo(name) {
-        // name is the element clicked
-        elementObject = data.elements.find(el => el.name === name)
-        console.log(elementObject)
-        // don't know why my component can't see `element`; this works:
-        elementName = elementObject['name']
-        symbol      = elementObject['symbol']
-        atomic_mass = elementObject['atomic_mass']
-        appearance  = elementObject['appearance']
-        if (appearance === null) {
-            appearance = 'no data'
-        }
-        boil        = elementObject['boil']
-        category    = elementObject['category']
-        density     = elementObject['density']
-        discovered_by  = elementObject['discovered_by']
-        melt        = elementObject['melt']
-        named_by    = elementObject['named_by']
-        if (named_by === null) {
-            named_by = 'no data'
-        }
-        phase       = elementObject['phase']
-        summary     = elementObject['summary']
-        source      = elementObject['source']
-
-        showInfoPanel = true // this will be set to false in the InfoPanel component
-
-    }
-
+ 
     const table = [
         'H', 'Hydrogen', '1.00794', 1, 1,
         'He', 'Helium', '4.002602', 18, 1,
@@ -187,11 +159,43 @@
     const objects = [];
     const targets = { table: [], sphere: [], helix: [], grid: [] };
     onMount(() => {
-        console.log(data)
         init();
         animate();
     })
-    
+
+    // this long-winded function is invoked when the user clicks on an element and populates the fields
+    // to display in a pop-up <dialog>
+    // Note: all of the null values were replaced with the string 'no data' in the the periodic table data
+
+    function showInfo(name) {
+        // name is the name of the element clicked
+        elementObject = data.elements.find(el => el.name === name)
+        
+        // don't know why my component can't see `element`; this works:
+        elementName = elementObject['name']
+        symbol      = elementObject['symbol']
+        atomic_mass = elementObject['atomic_mass']
+        appearance  = elementObject['appearance']
+        boil        = elementObject['boil']
+        if (boil != 'no data') {
+            boil =  boil + '°K'
+        }
+        category    = elementObject['category']
+        density     = elementObject['density']
+        discovered_by  = elementObject['discovered_by']
+        melt        = elementObject['melt']
+        if (melt != 'no data') {
+            melt =  melt + '°K'
+        }
+        named_by    = elementObject['named_by']
+        phase       = elementObject['phase']
+        summary     = elementObject['summary']
+        source      = elementObject['source']
+
+        showInfoPanel = true // this will be set to false in the InfoPanel component
+
+    }
+
     function init() {
 
         camera = new THREE.PerspectiveCamera( 40, window.innerWidth / window.innerHeight, 1, 10000 );
@@ -204,8 +208,7 @@
         for ( let i = 0; i < table.length; i += 5 ) {
 
             const element = document.createElement( 'div' );
-
-            // element.addEventListener('pointerdown', 
+            // not a best practice
             element.addEventListener('pointerdown', 
                 function () { 
                     showInfo(this.getAttribute('title')) // show more information about the element
@@ -230,6 +233,7 @@
             element.appendChild( details );
 
             const objectCSS = new CSS3DObject( element );
+            // place objects randomly about
             objectCSS.position.x = Math.random() * 4000 - 2000;
             objectCSS.position.y = Math.random() * 4000 - 2000;
             objectCSS.position.z = Math.random() * 4000 - 2000;
@@ -243,8 +247,6 @@
             const object = new THREE.Object3D();
             object.position.x = ( table[ i + 3 ] * 140 ) - 1330;
             object.position.y = - ( table[ i + 4 ] * 180 ) + 990;
-
-            object.addEventListener('click', showInfo) 
 
             targets.table.push( object );
 
@@ -430,26 +432,24 @@
     <ul>
         <li>Atomic Mass: {atomic_mass}</li>
         <li>Appearance: {appearance}</li>
-        <li>Boiling Point: {boil}&deg;K</li>
+        <li>Boiling Point: {boil}</li>
         <li>Category: {category}</li>
         <li>Density: {density}</li>
         <li>Discovered by: {discovered_by}</li>
-        <li>Melting Point: {melt}&deg;K</li>
+        <li>Melting Point: {melt}</li>
         <li>Named by: {named_by}</li>
         <li>Phase: {phase}</li>
     </ul>
     <p>Summary: {summary}</p>
     <p><a href="{source}">Information Source</a></p>
  
-
 </InfoPanel>
 
 <style>
-    :root {
+    /* :root {
         --main-color: indigo;
         --element-box-shadow-hover-color: rgba(0,255,255,0.75)
-        --element-box-shadow-color: rgba(0,255,255,0.5);
-    }
+    } */
     a {
         color: #8ff;
     }
@@ -467,7 +467,7 @@
    :global( .element ) {
         width: 120px;
         height: 160px;
-        box-shadow: 0px 0px 12px var(--element-box-shadow-color);
+        box-shadow: 0px 0px 12px rgba(0,255,255,0.5);
         border: 1px solid rgba(127,255,255,0.25);
         font-family: Helvetica, sans-serif;
         text-align: center;

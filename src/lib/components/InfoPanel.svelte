@@ -16,15 +16,14 @@
 	<div class="dialog_content" on:click|stopPropagation>
 		<slot />
 	</div>
-		<!-- svelte-ignore a11y-autofocus -->
-		<div class="wrapper">
-			<button class="button" autofocus on:click={() => dialog.close()}>CLOSE</button>
-		</div>
+	<!-- svelte-ignore a11y-autofocus -->
+	<div class="wrapper">
+		<button class="button" autofocus on:click={() => dialog.close()}>CLOSE</button>
+	</div>
 </dialog>
 
 <style>
 	dialog {
-
 		padding: 0;
 		/* height: 100vh; */
 		width: 400px;
@@ -33,7 +32,6 @@
 		background: rgba(255, 255, 255, 0.25);
 		background-color: rgba(0,127,127,0.5);
 		backdrop-filter: blur(20px);
-		overflow: auto;
 		overflow-x: hidden;
 
 	}
@@ -41,15 +39,14 @@
 		background: rgba(0, 0, 0, 0.3);
 	}
 	dialog > div {
-		padding: 0em;
-
+		padding: 0em; /* keeping this around; just to get rid of warning */
 	}
 	dialog[open] {
 		animation: zoom 1.0s cubic-bezier(0.34, 1.56, 0.64, 1);
 	}
 	@keyframes zoom {
 		from {
-			transform: scale(0.5);
+			transform: scale(0.1);
 		}
 		to {
 			transform: scale(1);
